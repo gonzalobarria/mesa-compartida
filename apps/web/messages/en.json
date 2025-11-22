@@ -22,5 +22,31 @@
   },
   "search": {
     "searchPlates": "Search for dishes..."
+  },
+  "vendor": {
+    "registration": {
+      "title": "Vendor Registration",
+      "description": "Create your vendor profile to start selling",
+      "nameLabel": "Business Name",
+      "namePlaceholder": "Enter your name or business name",
+      "ensLabel": "ENS Domain",
+      "ensPlaceholder": "your-name.mesacompartida.eth",
+      "ensHelper": "Your ENS domain will be used for verification",
+      "submitButton": "Create Vendor Profile"
+    },
+    "errors": {
+      "nameRequired": "Business name is required",
+      "ensRequired": "ENS domain is required"
+    }
+  },
+  "common": {
+    "buttons": {
+      "registering": "Registering..."
+    },
+    "errors": {
+      "walletNotConnected": "Wallet not connected",
+      "networkNotSupported": "Network not supported",
+      "transactionFailed": "Transaction failed. Please try again"
+    }
   }
 }

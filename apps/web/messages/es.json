@@ -22,5 +22,31 @@
   },
   "search": {
     "searchPlates": "Buscar platos..."
+  },
+  "vendor": {
+    "registration": {
+      "title": "Registro de Vendedor",
+      "description": "Crea tu perfil de vendedor para comenzar a vender",
+      "nameLabel": "Nombre del Negocio",
+      "namePlaceholder": "Ingresa tu nombre o el nombre de tu negocio",
+      "ensLabel": "Dominio ENS",
+      "ensPlaceholder": "tu-negocio.mesacompartida.eth",
+      "ensHelper": "Tu dominio ENS se usará para la verificación",
+      "submitButton": "Crear Perfil de Vendedor"
+    },
+    "errors": {
+      "nameRequired": "El nombre del negocio es requerido",
+      "ensRequired": "El dominio ENS es requerido"
+    }
+  },
+  "common": {
+    "buttons": {
+      "registering": "Registrando..."
+    },
+    "errors": {
+      "walletNotConnected": "Billetera no conectada",
+      "networkNotSupported": "Red no soportada",
+      "transactionFailed": "Transacción fallida. Por favor intenta de nuevo"
+    }
   }
 }
