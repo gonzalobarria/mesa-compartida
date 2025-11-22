@@ -1,0 +1,26 @@
+{
+  "nav": {
+    "search": "Inicio",
+    "vouchers": "Vouchers"
+  },
+  "roles": {
+    "selectRole": "Elige Tu Rol",
+    "selectRoleDescription": "Selecciona cómo quieres participar en Mesa Compartida",
+    "canChangeRole": "Puedes cambiar tu rol en cualquier momento desde la configuración de tu perfil",
+    "vendor": {
+      "title": "Vendedor",
+      "description": "Vende tus platos caseros"
+    },
+    "donor": {
+      "title": "Donante",
+      "description": "Dona comida excedente"
+    },
+    "beneficiary": {
+      "title": "Beneficiario",
+      "description": "Recibe asistencia"
+    }
+  },
+  "search": {
+    "searchPlates": "Buscar platos..."
+  }
+}

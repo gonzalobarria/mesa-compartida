@@ -1,0 +1,26 @@
+{
+  "nav": {
+    "search": "Home",
+    "vouchers": "Vouchers"
+  },
+  "roles": {
+    "selectRole": "Choose Your Role",
+    "selectRoleDescription": "Select how you want to participate in Mesa Compartida",
+    "canChangeRole": "You can change your role at any time from your profile settings",
+    "vendor": {
+      "title": "Vendor",
+      "description": "Sell your homemade dishes"
+    },
+    "donor": {
+      "title": "Donor",
+      "description": "Donate surplus food"
+    },
+    "beneficiary": {
+      "title": "Beneficiary",
+      "description": "Receive assistance"
+    }
+  },
+  "search": {
+    "searchPlates": "Search for dishes..."
+  }
+}

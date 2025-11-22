@@ -1,6 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  images: {
+    unoptimized: true,
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+    ],
+  },
   webpack: (config) => {
     config.externals.push('pino-pretty', 'lokijs', 'encoding')
     config.resolve.alias = {
@@ -11,4 +20,8 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig;
+const withNextIntl = require('next-intl/plugin')(
+  './src/i18n.ts'
+);
+
+module.exports = withNextIntl(nextConfig);
