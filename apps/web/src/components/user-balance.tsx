@@ -1,11 +1,8 @@
 "use client";
 
-import { useAccount, useBalance } from "wagmi";
+import { useAccount, useBalance, useChainId } from "wagmi";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
-const cUSD_ADDRESS = "0x765de816845861e75a25fca122bb6898b8b1282a";
-const USDC_ADDRESS = "0xcebA9300f2b948710d2653dD7B07f33A8B32118C";
-const USDT_ADDRESS = "0x48065fbBE25f71C9282ddf5e1cD6D6A887483D5e";
+import { getContractAddress } from "@/config/contracts";
 
 function BalanceDisplay({ address, token, symbol }: { address: `0x${string}`, token?: `0x${string}`, symbol: string }) {
   const { data, isLoading } = useBalance({
@@ -25,10 +22,15 @@ function BalanceDisplay({ address, token, symbol }: { address: `0x${string}`, to
 
 export function UserBalance() {
   const { address, isConnected } = useAccount();
+  const chainId = useChainId();
 
   if (!isConnected || !address) {
     return null;
   }
+
+  const cUSD_ADDRESS = getContractAddress(chainId, "cUSD") as `0x${string}` | undefined;
+  const USDC_ADDRESS = getContractAddress(chainId, "USDC") as `0x${string}` | undefined;
+  const USDT_ADDRESS = getContractAddress(chainId, "USDT") as `0x${string}` | undefined;
 
   return (
     <Card className="w-full max-w-md mx-auto mb-8">
@@ -39,9 +41,9 @@ export function UserBalance() {
       <CardContent className="space-y-4">
         <div className="space-y-2 pt-2 border-t">
           <BalanceDisplay address={address} symbol="CELO" token={undefined} />
-          <BalanceDisplay address={address} token={cUSD_ADDRESS} symbol="cUSD" />
-          <BalanceDisplay address={address} token={USDC_ADDRESS} symbol="USDC" />
-          <BalanceDisplay address={address} token={USDT_ADDRESS} symbol="USDT" />
+          {cUSD_ADDRESS && <BalanceDisplay address={address} token={cUSD_ADDRESS} symbol="cUSD" />}
+          {USDC_ADDRESS && <BalanceDisplay address={address} token={USDC_ADDRESS} symbol="USDC" />}
+          {USDT_ADDRESS && <BalanceDisplay address={address} token={USDT_ADDRESS} symbol="USDT" />}
         </div>
       </CardContent>
     </Card>
