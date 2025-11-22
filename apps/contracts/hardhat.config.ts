@@ -28,11 +28,23 @@ export default defineConfig({
       type: "edr-simulated",
       chainType: "op",
     },
-    sepolia: {
+    celoSepolia: {
       type: "http",
-      chainType: "l1",
-      url: configVariable("SEPOLIA_RPC_URL"),
-      accounts: [configVariable("SEPOLIA_PRIVATE_KEY")],
+      url: "https://forno.celo-sepolia.celo-testnet.org/",
+      accounts: {
+        mnemonic: configVariable("PRIVATE_KEY_MNEMONIC"),
+        path: "m/44'/52752'/0'/0"
+      },
+      chainId: 11142220
     },
+    celo: {
+      type: "http",
+      url: "https://forno.celo.org⁄",
+      accounts: {
+        mnemonic: configVariable("PRIVATE_KEY_MNEMONIC"),
+        path: "m/44'/52752'/0'/0"
+      },
+      chainId: 42220
+    }
   },
 });
