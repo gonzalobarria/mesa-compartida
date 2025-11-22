@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 
 contract PlateNFT is ERC721, ERC721Enumerable, Ownable {
     uint256 private _tokenIdCounter;
+    uint256[] private _allPlateIds;
 
     struct PlateMetadata {
         string name;
@@ -27,6 +28,9 @@ contract PlateNFT is ERC721, ERC721Enumerable, Ownable {
 
     mapping(uint256 => PlateMetadata) public plateMetadata;
     mapping(uint256 => VoucherNFT) public voucherNFTs;
+    mapping(address => uint256[]) public vendorPlates;
+    mapping(uint256 => uint256) public voucherToRedemptionCode;
+    mapping(uint256 => uint256) public redemptionCodeToVoucher;
 
     constructor() ERC721("MesaCompartidaPlates", "PLATE") Ownable(msg.sender) {}
 
@@ -50,6 +54,9 @@ contract PlateNFT is ERC721, ERC721Enumerable, Ownable {
             availableVouchers: _maxSupply
         });
 
+        vendorPlates[msg.sender].push(plateId);
+        _allPlateIds.push(plateId);
+
         for (uint256 i = 0; i < _maxSupply; i++) {
             uint256 tokenId = _tokenIdCounter++;
 
@@ -58,9 +65,49 @@ contract PlateNFT is ERC721, ERC721Enumerable, Ownable {
                 redeemed: false,
                 redeemedAt: 0
             });
+
+            uint256 redemptionCode = uint256(
+                keccak256(
+                    abi.encodePacked(plateId, i, block.timestamp, msg.sender)
+                )
+            );
+
+            voucherToRedemptionCode[tokenId] = redemptionCode;
+            redemptionCodeToVoucher[redemptionCode] = tokenId;
+
+            _safeMint(msg.sender, tokenId);
         }
 
         return plateId;
+    }
+
+    function transferVoucher(uint256 _tokenId, address _to) external {
+        VoucherNFT memory voucher = voucherNFTs[_tokenId];
+        PlateMetadata storage plate = plateMetadata[voucher.plateId];
+
+        require(block.timestamp < plate.expiresAt, "Voucher has expired");
+        require(!voucher.redeemed, "Voucher already redeemed");
+
+        plate.availableVouchers--;
+        _transfer(msg.sender, _to, _tokenId);
+    }
+
+    function redeemVoucher(uint256 _tokenId) external {
+        VoucherNFT storage voucher = voucherNFTs[_tokenId];
+        PlateMetadata storage plate = plateMetadata[voucher.plateId];
+
+        voucher.redeemed = true;
+        voucher.redeemedAt = block.timestamp;
+    }
+
+    function redeemVoucherByCode(uint256 _redemptionCode) external {
+        uint256 tokenId = redemptionCodeToVoucher[_redemptionCode];
+
+        VoucherNFT storage voucher = voucherNFTs[tokenId];
+        PlateMetadata storage plate = plateMetadata[voucher.plateId];
+
+        voucher.redeemed = true;
+        voucher.redeemedAt = block.timestamp;
     }
 
     function supportsInterface(

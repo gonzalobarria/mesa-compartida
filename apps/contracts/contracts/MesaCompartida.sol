@@ -39,20 +39,40 @@ contract MesaCompartida is Ownable {
         uint256 totalPurchases;
     }
 
-    mapping (address => VendorProfile) public vendorProfiles;
-    mapping (address => BuyerProfile) public buyerProfiles;
-    mapping (uint256 => VoucherTransaction) public voucherTransactions;
+    mapping(uint256 => VoucherTransaction) public voucherTransactions;
+    mapping(uint256 => bool) public vendorRated;
+    mapping(uint256 => bool) public buyerRated;
+
+    mapping(address => VendorProfile) public vendorProfiles;
+    mapping(address => BuyerProfile) public buyerProfiles;
 
     mapping(address => bool) public isVendor;
     mapping(address => bool) public isBuyer;
+
+    mapping(uint256 => uint256) public escrowAmount;
+
+    uint256 public platformFeePercent = 0;
+    mapping(address => uint256) public platformBalance;
+    mapping(address => mapping(address => uint256)) public vendorEarnings;
+    PlateNFT public plateNFT;
+    uint256 public voucherTransactionCounter;
 
     constructor(address _plateNFT) Ownable(msg.sender) {
         require(_plateNFT != address(0), "Invalid plateNFT");
         plateNFT = PlateNFT(_plateNFT);
     }
 
+    function setPlateNFT(address _plateNFT) external onlyOwner {
+        plateNFT = PlateNFT(_plateNFT);
+    }
+
+    function setPlatformFee(uint256 _feePercent) external onlyOwner {
+        platformFeePercent = _feePercent;
+    }
+
     function createVendorProfile(
         string memory _name,
+        string memory _ensDomain
     ) external {
         isVendor[msg.sender] = true;
         vendorProfiles[msg.sender] = VendorProfile({
@@ -64,10 +84,7 @@ contract MesaCompartida is Ownable {
         });
     }
 
-    function createBuyerProfile(
-        string memory _name
-    ) external {
-
+    function createBuyerProfile(string memory _name) external {
         isBuyer[msg.sender] = true;
         buyerProfiles[msg.sender] = BuyerProfile({
             name: _name,
@@ -76,14 +93,73 @@ contract MesaCompartida is Ownable {
             totalPurchases: 0
         });
     }
-    
+
     function createPlate(
-        string memory _name,wrapper
+        string memory _name,
         string memory _description,
         string memory _ipfsHash,
         uint256 _maxSupply,
         uint256 _expiresAt
     ) external returns (uint256) {
-        return plateNFT.createPlate(_name, _description, _ipfsHash, _maxSupply, _expiresAt);
+        return
+            plateNFT.createPlate(
+                _name,
+                _description,
+                _ipfsHash,
+                _maxSupply,
+                _expiresAt
+            );
     }
+
+    function purchaseVoucher(
+        uint256 _voucherTokenId,
+        uint256 _amount,
+        address _token
+    ) external returns (uint256) {
+        address vendor = plateNFT.ownerOf(_voucherTokenId);
+
+        uint256 transactionId = voucherTransactionCounter++;
+
+        voucherTransactions[transactionId] = VoucherTransaction({
+            buyer: msg.sender,
+            vendor: vendor,
+            amount: _amount,
+            token: IERC20(_token),
+            status: DeliveryStatus.PENDING,
+            timestamp: block.timestamp
+        });
+
+        escrowAmount[transactionId] = _amount;
+
+        IERC20(_token).safeTransferFrom(msg.sender, address(this), _amount);
+
+        plateNFT.transferVoucher(_voucherTokenId, msg.sender);
+
+        return transactionId;
+    }
+
+    function markReady(uint256 _transactionId) external {
+        VoucherTransaction storage transaction = voucherTransactions[
+            _transactionId
+        ];
+
+        transaction.status = DeliveryStatus.READY;
+    }
+
+    function confirmDelivery(uint256 _transactionId) external {
+        VoucherTransaction storage transaction = voucherTransactions[
+            _transactionId
+        ];
+
+        transaction.status = DeliveryStatus.COMPLETED;
+
+        uint256 feeAmount = (transaction.amount * platformFeePercent) / 100;
+        uint256 vendorAmount = transaction.amount - feeAmount;
+
+        transaction.token.safeTransfer(transaction.vendor, vendorAmount);
+
+        vendorProfiles[transaction.vendor].totalSales++;
+        vendorEarnings[transaction.vendor][address(transaction.token)] += vendorAmount;
+    }
+
 }
