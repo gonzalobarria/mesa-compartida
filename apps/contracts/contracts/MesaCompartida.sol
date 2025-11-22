@@ -197,6 +197,33 @@ contract MesaCompartida is Ownable {
         return transactionId;
     }
 
+    function claimVoucher(uint256 _transactionId) external {
+        VoucherTransaction storage transaction = voucherTransactions[
+            _transactionId
+        ];
+
+        require(
+            transaction.status == DeliveryStatus.PENDING,
+            "Voucher not available"
+        );
+        require(
+            voucherBeneficiary[_transactionId] == address(0),
+            "Voucher already claimed"
+        );
+        require(
+            isBeneficiary[msg.sender],
+            "Only registered beneficiaries can claim"
+        );
+
+        voucherBeneficiary[_transactionId] = msg.sender;
+
+        plateNFT.transferVoucherFrom(
+            transaction.voucherTokenId,
+            transaction.buyer,
+            msg.sender
+        );
+    }
+
     function markReady(uint256 _transactionId) external {
         VoucherTransaction storage transaction = voucherTransactions[
             _transactionId
@@ -244,5 +271,110 @@ contract MesaCompartida is Ownable {
         if (beneficiary != address(0)) {
             beneficiaryProfiles[beneficiary].totalRedemptions++;
         }
+    }
+
+    function getVoucherTransaction(
+        uint256 _transactionId
+    ) external view returns (VoucherTransaction memory) {
+        return voucherTransactions[_transactionId];
+    }
+
+    function getVendorProfile(
+        address _vendor
+    ) external view returns (VendorProfile memory) {
+        return vendorProfiles[_vendor];
+    }
+
+    function getBuyerProfile(
+        address _buyer
+    ) external view returns (BuyerProfile memory) {
+        return buyerProfiles[_buyer];
+    }
+
+    function getEscrowAmount(
+        uint256 _transactionId
+    ) external view returns (uint256) {
+        return escrowAmount[_transactionId];
+    }
+
+    function getVendorEarnings(
+        address _vendor,
+        address _token
+    ) external view returns (uint256) {
+        return vendorEarnings[_vendor][_token];
+    }
+
+    function getBeneficiaryProfile(
+        address _beneficiary
+    ) external view returns (BeneficiaryProfile memory) {
+        return beneficiaryProfiles[_beneficiary];
+    }
+
+    function getVoucherBeneficiary(
+        uint256 _transactionId
+    ) external view returns (address) {
+        return voucherBeneficiary[_transactionId];
+    }
+
+    function getMarketplaceVouchers()
+        external
+        view
+        returns (PlateNFT.PlateMetadata[] memory)
+    {
+        PlateNFT.PlateMetadata[] memory activePlates = plateNFT
+            .getActivePlates();
+        uint256 count = 0;
+
+        for (uint256 i = 0; i < activePlates.length; i++) {
+            if (activePlates[i].availableVouchers > 0) {
+                count++;
+            }
+        }
+
+        PlateNFT.PlateMetadata[]
+            memory marketplaceVouchers = new PlateNFT.PlateMetadata[](count);
+        uint256 index = 0;
+
+        for (uint256 i = 0; i < activePlates.length; i++) {
+            if (activePlates[i].availableVouchers > 0) {
+                marketplaceVouchers[index] = activePlates[i];
+                index++;
+            }
+        }
+
+        return marketplaceVouchers;
+    }
+
+    function getAvailableVouchersForBeneficiary()
+        external
+        view
+        returns (VoucherTransaction[] memory)
+    {
+        uint256 count = 0;
+
+        for (uint256 i = 0; i < voucherTransactionCounter; i++) {
+            if (
+                voucherTransactions[i].status == DeliveryStatus.PENDING &&
+                voucherBeneficiary[i] == address(0)
+            ) {
+                count++;
+            }
+        }
+
+        VoucherTransaction[]
+            memory availableVouchers = new VoucherTransaction[](count);
+        uint256 index = 0;
+
+        for (uint256 i = 0; i < voucherTransactionCounter; i++) {
+            if (
+                voucherTransactions[i].status == DeliveryStatus.PENDING &&
+                voucherBeneficiary[i] == address(0)
+            ) {
+                availableVouchers[index] = voucherTransactions[i];
+                index++;
+            }
+        }
+
+        return availableVouchers;
     }
 }

@@ -4,6 +4,8 @@ pragma solidity ^0.8.28;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts/utils/Base64.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 
 contract PlateNFT is ERC721, ERC721Enumerable, Ownable {
     uint256 private _tokenIdCounter;
@@ -218,5 +220,53 @@ contract PlateNFT is ERC721, ERC721Enumerable, Ownable {
         uint128 value
     ) internal override(ERC721, ERC721Enumerable) {
         super._increaseBalance(account, value);
+    }
+
+    function tokenURI(
+        uint256 _tokenId
+    ) public view override returns (string memory) {
+        require(ownerOf(_tokenId) != address(0), "Token does not exist");
+
+        VoucherNFT memory voucher = voucherNFTs[_tokenId];
+        PlateMetadata memory plate = plateMetadata[voucher.plateId];
+
+        string memory json = Base64.encode(
+            bytes(
+                string(
+                    abi.encodePacked(
+                        '{"name": "',
+                        plate.name,
+                        '", "description": "',
+                        plate.description,
+                        '", "image": "ipfs://',
+                        plate.ipfsHash,
+                        '", "attributes": [{"trait_type": "Vendor", "value": "',
+                        _addressToString(plate.vendor),
+                        '"}, {"trait_type": "Redeemed", "value": "',
+                        voucher.redeemed ? "true" : "false",
+                        '"}, {"trait_type": "Expires At", "value": "',
+                        Strings.toString(plate.expiresAt),
+                        '"}]}'
+                    )
+                )
+            )
+        );
+
+        return string(abi.encodePacked("data:application/json;base64,", json));
+    }
+
+    function _addressToString(
+        address _addr
+    ) internal pure returns (string memory) {
+        bytes32 _bytes = bytes32(uint256(uint160(_addr)));
+        bytes memory HEX = "0123456789abcdef";
+        bytes memory result = new bytes(42);
+        result[0] = "0";
+        result[1] = "x";
+        for (uint256 i = 0; i < 20; i++) {
+            result[2 + i * 2] = HEX[uint8(_bytes[i + 12] >> 4)];
+            result[3 + i * 2] = HEX[uint8(_bytes[i + 12] & 0x0f)];
+        }
+        return string(result);
     }
 }
