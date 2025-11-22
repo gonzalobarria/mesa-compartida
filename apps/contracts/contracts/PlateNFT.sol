@@ -41,6 +41,13 @@ contract PlateNFT is ERC721, ERC721Enumerable, Ownable {
         uint256 _maxSupply,
         uint256 _expiresAt
     ) external returns (uint256) {
+        require(bytes(_name).length > 0, "Name cannot be empty");
+        require(_maxSupply > 0, "Max supply must be > 0");
+        require(
+            _expiresAt > block.timestamp,
+            "Expiration must be in the future"
+        );
+
         uint256 plateId = _tokenIdCounter++;
 
         plateMetadata[plateId] = PlateMetadata({
@@ -82,6 +89,8 @@ contract PlateNFT is ERC721, ERC721Enumerable, Ownable {
     }
 
     function transferVoucher(uint256 _tokenId, address _to) external {
+        require(ownerOf(_tokenId) == msg.sender, "Not voucher owner");
+
         VoucherNFT memory voucher = voucherNFTs[_tokenId];
         PlateMetadata storage plate = plateMetadata[voucher.plateId];
 
@@ -92,9 +101,29 @@ contract PlateNFT is ERC721, ERC721Enumerable, Ownable {
         _transfer(msg.sender, _to, _tokenId);
     }
 
+    function transferVoucherFrom(
+        uint256 _tokenId,
+        address _from,
+        address _to
+    ) external onlyOwner {
+        require(ownerOf(_tokenId) == _from, "Not voucher owner");
+
+        VoucherNFT memory voucher = voucherNFTs[_tokenId];
+        PlateMetadata storage plate = plateMetadata[voucher.plateId];
+
+        require(block.timestamp < plate.expiresAt, "Voucher has expired");
+        require(!voucher.redeemed, "Voucher already redeemed");
+
+        _transfer(_from, _to, _tokenId);
+    }
+
     function redeemVoucher(uint256 _tokenId) external {
         VoucherNFT storage voucher = voucherNFTs[_tokenId];
         PlateMetadata storage plate = plateMetadata[voucher.plateId];
+
+        require(ownerOf(_tokenId) == msg.sender, "Not voucher owner");
+        require(!voucher.redeemed, "Voucher already redeemed");
+        require(block.timestamp < plate.expiresAt, "Voucher has expired");
 
         voucher.redeemed = true;
         voucher.redeemedAt = block.timestamp;
@@ -102,12 +131,72 @@ contract PlateNFT is ERC721, ERC721Enumerable, Ownable {
 
     function redeemVoucherByCode(uint256 _redemptionCode) external {
         uint256 tokenId = redemptionCodeToVoucher[_redemptionCode];
+        require(tokenId != 0, "Invalid redemption code");
 
         VoucherNFT storage voucher = voucherNFTs[tokenId];
         PlateMetadata storage plate = plateMetadata[voucher.plateId];
 
+        require(ownerOf(tokenId) == msg.sender, "Not voucher owner");
+        require(!voucher.redeemed, "Voucher already redeemed");
+        require(block.timestamp < plate.expiresAt, "Voucher has expired");
+
         voucher.redeemed = true;
         voucher.redeemedAt = block.timestamp;
+    }
+
+    function isVoucherValid(uint256 _tokenId) external view returns (bool) {
+        VoucherNFT memory voucher = voucherNFTs[_tokenId];
+        PlateMetadata memory plate = plateMetadata[voucher.plateId];
+
+        return !voucher.redeemed && block.timestamp < plate.expiresAt;
+    }
+
+    function isVoucherExpired(uint256 _tokenId) external view returns (bool) {
+        VoucherNFT memory voucher = voucherNFTs[_tokenId];
+        PlateMetadata memory plate = plateMetadata[voucher.plateId];
+
+        return block.timestamp >= plate.expiresAt;
+    }
+
+    function getVoucherInfo(
+        uint256 _tokenId
+    ) external view returns (VoucherNFT memory) {
+        return voucherNFTs[_tokenId];
+    }
+
+    function getPlateMetadata(
+        uint256 _plateId
+    ) external view returns (PlateMetadata memory) {
+        return plateMetadata[_plateId];
+    }
+
+    function getVendorPlates(
+        address _vendor
+    ) external view returns (uint256[] memory) {
+        return vendorPlates[_vendor];
+    }
+
+    function getActivePlates() external view returns (PlateMetadata[] memory) {
+        uint256 count = 0;
+
+        for (uint256 i = 0; i < _allPlateIds.length; i++) {
+            if (plateMetadata[_allPlateIds[i]].expiresAt > block.timestamp) {
+                count++;
+            }
+        }
+
+        PlateMetadata[] memory activePlates = new PlateMetadata[](count);
+        uint256 index = 0;
+
+        for (uint256 i = 0; i < _allPlateIds.length; i++) {
+            uint256 plateId = _allPlateIds[i];
+            if (plateMetadata[plateId].expiresAt > block.timestamp) {
+                activePlates[index] = plateMetadata[plateId];
+                index++;
+            }
+        }
+
+        return activePlates;
     }
 
     function supportsInterface(
