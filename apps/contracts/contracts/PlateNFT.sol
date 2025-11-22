@@ -30,6 +30,39 @@ contract PlateNFT is ERC721, ERC721Enumerable, Ownable {
 
     constructor() ERC721("MesaCompartidaPlates", "PLATE") Ownable(msg.sender) {}
 
+    function createPlate(
+        string memory _name,
+        string memory _description,
+        string memory _ipfsHash,
+        uint256 _maxSupply,
+        uint256 _expiresAt
+    ) external returns (uint256) {
+        uint256 plateId = _tokenIdCounter++;
+
+        plateMetadata[plateId] = PlateMetadata({
+            name: _name,
+            description: _description,
+            ipfsHash: _ipfsHash,
+            vendor: msg.sender,
+            createdAt: block.timestamp,
+            expiresAt: _expiresAt,
+            maxSupply: _maxSupply,
+            availableVouchers: _maxSupply
+        });
+
+        for (uint256 i = 0; i < _maxSupply; i++) {
+            uint256 tokenId = _tokenIdCounter++;
+
+            voucherNFTs[tokenId] = VoucherNFT({
+                plateId: plateId,
+                redeemed: false,
+                redeemedAt: 0
+            });
+        }
+
+        return plateId;
+    }
+
     function supportsInterface(
         bytes4 interfaceId
     ) public view override(ERC721, ERC721Enumerable) returns (bool) {
