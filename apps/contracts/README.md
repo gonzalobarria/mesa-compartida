@@ -1,99 +1,57 @@
-# my-celo-app - Smart Contracts
+# Sample Hardhat 3 Beta Project (`mocha` and `ethers`)
 
-This directory contains the smart contracts for my-celo-app, built with Hardhat and optimized for the Celo blockchain.
+This project showcases a Hardhat 3 Beta project using `mocha` for tests and the `ethers` library for Ethereum interactions.
 
-## 🚀 Quick Start
+To learn more about the Hardhat 3 Beta, please visit the [Getting Started guide](https://hardhat.org/docs/getting-started#getting-started-with-hardhat-3). To share your feedback, join our [Hardhat 3 Beta](https://hardhat.org/hardhat3-beta-telegram-group) Telegram group or [open an issue](https://github.com/NomicFoundation/hardhat/issues/new) in our GitHub issue tracker.
 
-```bash
-# Install dependencies
-pnpm install
+## Project Overview
 
-# Compile contracts
-pnpm compile
+This example project includes:
 
-# Run tests
-pnpm test
+- A simple Hardhat configuration file.
+- Foundry-compatible Solidity unit tests.
+- TypeScript integration tests using `mocha` and ethers.js
+- Examples demonstrating how to connect to different types of networks, including locally simulating OP mainnet.
 
-# Deploy to Alfajores testnet
-pnpm deploy:alfajores
+## Usage
 
-# Deploy to Sepolia testnet
-pnpm deploy:sepolia
+### Running Tests
 
-# Deploy to Celo mainnet
-pnpm deploy:celo
+To run all the tests in the project, execute the following command:
+
+```shell
+npx hardhat test
 ```
 
-## 📜 Available Scripts
+You can also selectively run the Solidity or `mocha` tests:
 
-- `pnpm compile` - Compile smart contracts
-- `pnpm test` - Run contract tests
-- `pnpm deploy` - Deploy to local network
-- `pnpm deploy:alfajores` - Deploy to Celo Alfajores testnet
-- `pnpm deploy:sepolia` - Deploy to Celo Sepolia testnet
-- `pnpm deploy:celo` - Deploy to Celo mainnet
-- `pnpm verify` - Verify contracts on Celoscan
-- `pnpm clean` - Clean artifacts and cache
-
-## 🌐 Networks
-
-### Celo Mainnet
-- **Chain ID**: 42220
-- **RPC URL**: https://forno.celo.org
-- **Explorer**: https://celoscan.io
-
-### Alfajores Testnet
-- **Chain ID**: 44787
-- **RPC URL**: https://alfajores-forno.celo-testnet.org
-- **Explorer**: https://alfajores.celoscan.io
-- **Faucet**: https://faucet.celo.org
-
-### Sepolia Testnet
-- **Chain ID**: 11142220
-- **RPC URL**: https://forno.celo-sepolia.celo-testnet.org
-- **Explorer**: https://celo-sepolia.blockscout.com
-- **Faucet**: https://faucet.celo.org/celo-sepolia
-
-## 🔧 Environment Setup
-
-1. Copy the environment template:
-   ```bash
-   cp .env.example .env
-   ```
-
-2. Fill in your private key and API keys:
-   ```env
-   PRIVATE_KEY=your_private_key_without_0x_prefix
-   CELOSCAN_API_KEY=your_celoscan_api_key
-   ```
-
-## 📁 Project Structure
-
-```
-contracts/          # Smart contract source files
-├── Lock.sol        # Sample timelock contract
-
-test/              # Contract tests
-├── Lock.ts        # Tests for Lock contract
-
-ignition/          # Deployment scripts
-└── modules/
-    └── Lock.ts    # Lock contract deployment
-
-hardhat.config.ts  # Hardhat configuration
-tsconfig.json      # TypeScript configuration
+```shell
+npx hardhat test solidity
+npx hardhat test mocha
 ```
 
-## 🔐 Security Notes
+### Make a deployment to Sepolia
 
-- Never commit your `.env` file with real private keys
-- Use a dedicated wallet for development/testing
-- Test thoroughly on Alfajores before mainnet deployment
-- Consider using a hardware wallet for mainnet deployments
+This project includes an example Ignition module to deploy the contract. You can deploy this module to a locally simulated chain or to Sepolia.
 
-## 📚 Learn More
+To run the deployment to a local chain:
 
-- [Hardhat Documentation](https://hardhat.org/docs)
-- [Celo Developer Documentation](https://docs.celo.org)
-- [Celo Smart Contract Best Practices](https://docs.celo.org/developer/contractkit)
-- [Viem Documentation](https://viem.sh) (Ethereum library used by Hardhat)
+```shell
+npx hardhat ignition deploy ignition/modules/Counter.ts
+```
+
+To run the deployment to Sepolia, you need an account with funds to send the transaction. The provided Hardhat configuration includes a Configuration Variable called `SEPOLIA_PRIVATE_KEY`, which you can use to set the private key of the account you want to use.
+
+You can set the `SEPOLIA_PRIVATE_KEY` variable using the `hardhat-keystore` plugin or by setting it as an environment variable.
+
+To set the `SEPOLIA_PRIVATE_KEY` config variable using `hardhat-keystore`:
+
+```shell
+npx hardhat keystore set SEPOLIA_PRIVATE_KEY
+```
+
+After setting the variable, you can run the deployment with the Sepolia network:
+
+```shell
+npx hardhat ignition deploy --network sepolia ignition/modules/Counter.ts
+```
