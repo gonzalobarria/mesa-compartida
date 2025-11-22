@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useAccount, useWriteContract, useChainId } from "wagmi";
 import { useUserStore } from "@/stores/userStore";
+import { useVendorStore, useVendorStoreActions } from "@/stores/vendorStore";
 import { useRouter, useParams } from "next/navigation";
 import { getContractAddress, getContractABI } from "@/config/contracts";
 import { Button } from "@/components/ui/button";
@@ -15,13 +16,16 @@ export default function VendorRegistrationPage() {
   const params = useParams();
   const locale = params.locale as string;
   const chainId = useChainId();
-  const { address } = useAccount();
+  const { address, isConnected } = useAccount();
   const [vendorName, setVendorName] = useState("");
   const [ensDomain, setEnsDomain] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isCheckingVendor, setIsCheckingVendor] = useState(true);
 
   const setVendorProfile = useUserStore((state) => state.setVendorProfile);
+  const { currentVendor } = useVendorStore();
+  const vendorStoreActions = useVendorStoreActions();
 
   const contractAddress = chainId
     ? getContractAddress(chainId, "MesaCompartida")
@@ -29,6 +33,34 @@ export default function VendorRegistrationPage() {
   const contractABI = getContractABI("MesaCompartida");
 
   const { writeContractAsync } = useWriteContract();
+
+  // Check if user is already a vendor
+  useEffect(() => {
+    const checkVendorStatus = async () => {
+      if (!isConnected || !address) {
+        setIsCheckingVendor(false);
+        return;
+      }
+
+      try {
+        setIsCheckingVendor(true);
+        await vendorStoreActions.fetchVendorProfile(address);
+      } catch (err) {
+        console.error("Error checking vendor profile:", err);
+      } finally {
+        setIsCheckingVendor(false);
+      }
+    };
+
+    checkVendorStatus();
+  }, [address, isConnected, vendorStoreActions]);
+
+  // Redirect if already a vendor
+  useEffect(() => {
+    if (!isCheckingVendor && currentVendor && currentVendor.name) {
+      router.push(`/${locale}`);
+    }
+  }, [isCheckingVendor, currentVendor, router, locale]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,8 +97,8 @@ export default function VendorRegistrationPage() {
       });
 
       if (hash) {
-        // Update local store
-        setVendorProfile({
+        // Update vendor profile in store
+        const newVendorProfile = {
           address: address,
           name: vendorName,
           ipfsHash: "",
@@ -74,6 +106,20 @@ export default function VendorRegistrationPage() {
           totalSales: 0,
           verified: false,
           ensSubdomain: ensDomain,
+          createdAt: Date.now(),
+        };
+
+        setVendorProfile(newVendorProfile);
+
+        // Also update the vendor store
+        const vendorStore = useVendorStore.getState();
+        vendorStore.setCurrentVendor({
+          address: address,
+          name: vendorName,
+          ipfsHash: "",
+          rating: 0,
+          totalSales: 0,
+          verified: false,
           createdAt: Date.now(),
         });
 
@@ -88,6 +134,18 @@ export default function VendorRegistrationPage() {
       setIsLoading(false);
     }
   };
+
+  // Show loading while checking vendor status
+  if (isCheckingVendor) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">{t("common.loading")}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
