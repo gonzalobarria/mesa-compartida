@@ -55,3 +55,15 @@ After setting the variable, you can run the deployment with the Sepolia network:
 ```shell
 npx hardhat ignition deploy --network sepolia ignition/modules/Counter.ts
 ```
+
+Verify PlateNFT
+
+```shell
+npx hardhat verify --network celoSepolia 0xPlateNFT
+```
+
+Verify MesaCompartida
+
+```shell
+npx hardhat verify --network celoSepolia 0xMesaCompartida 0xPlateNFT 
+```

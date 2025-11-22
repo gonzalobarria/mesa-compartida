@@ -47,4 +47,34 @@ export default defineConfig({
       chainId: 42220
     }
   },
+  chainDescriptors: {
+    11142220: {
+      name: "celoSepolia",
+      blockExplorers: {
+        etherscan: {
+          name: "celoSepolia",
+          url: "https://sepolia.celoscan.io",
+          apiUrl: "https://api.etherscan.io/v2/api",
+        },
+      },
+    },
+    42220: {
+      name: "celo",
+      blockExplorers: {
+        etherscan: {
+          name: "celo",
+          url: "https://celoscan.io/",
+          apiUrl: "https://api.etherscan.io/v2/api",
+        },
+      },
+    },
+  },
+  verify: {
+    blockscout: {
+      enabled: false,
+    },
+    etherscan: {
+      apiKey: configVariable("ETHERSCAN_API_KEY"),
+    },
+  }
 });
