@@ -226,13 +226,18 @@ const fetchVendorProfileHandler = async (
       args: [vendorAddress],
     });
 
-    // Map contract data to VendorProfile type
+    if (!profileData || !profileData.name || profileData.name === "") {
+      vendorStore.setCurrentVendor(null);
+      vendorStore.setLoading(false);
+      return;
+    }
+
     const vendorProfile: VendorProfile = {
       address: vendorAddress,
       name: profileData.name || "",
-      ipfsHash: "", // Not available from contract
+      ipfsHash: "",
       rating: profileData.ratingCount > 0
-        ? profileData.ratingSum / profileData.ratingCount
+        ? Number(profileData.ratingSum) / Number(profileData.ratingCount)
         : 0,
       totalSales: Number(profileData.totalSales),
       verified: profileData.verified || false,
@@ -242,10 +247,8 @@ const fetchVendorProfileHandler = async (
     vendorStore.setCurrentVendor(vendorProfile);
     vendorStore.setLoading(false);
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to fetch vendor profile";
-    vendorStore.setError(message);
     vendorStore.setCurrentVendor(null);
     vendorStore.setLoading(false);
-    throw error;
+    return;
   }
 };
