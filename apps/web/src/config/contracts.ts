@@ -19,8 +19,8 @@ export const TOKENS_BY_CHAIN = {
 // Smart contract addresses by chain
 export const SMART_CONTRACTS_BY_CHAIN = {
   [celoSepolia.id]: {
-    PlateNFT: "0xA3c6a63584d7c5173c49A7F0614578f19C7A08c2",
-    MesaCompartida: "0x66603ace377D45003912BBC92a036Aae0dB263cF",
+    PlateNFT: "0x2E7D0cB0C6C901ea81c834ADA96d72E041A2A3B7",
+    MesaCompartida: "0xDb2fA268d919691a898bF37C0CF565291ACD385e",
   },
   [celo.id]: {
     PlateNFT: "0x0000000000000000000000000000000000000000",

@@ -3,13 +3,11 @@
 import { useEffect, useState, useCallback } from "react";
 import { useAccount, useChainId } from "wagmi";
 import { usePublicClient } from "wagmi";
-import { useTranslations } from "next-intl";
 import { Plus } from "lucide-react";
 import { getContractAddress, getContractABI } from "@/config/contracts";
 import { Plate } from "@/types";
 
 export function VendorVouchers() {
-  const t = useTranslations();
   const { address } = useAccount();
   const chainId = useChainId();
   const publicClient = usePublicClient();
@@ -29,7 +27,7 @@ export function VendorVouchers() {
       const mesaABI = getContractABI("MesaCompartida");
 
       if (!mesaAddress) {
-        setError(t("common.errors.networkNotSupported"));
+        setError("Network not supported");
         return;
       }
 
@@ -60,7 +58,7 @@ export function VendorVouchers() {
     } finally {
       setIsLoading(false);
     }
-  }, [address, publicClient, chainId, t]);
+  }, [address, publicClient, chainId]);
 
   useEffect(() => {
     fetchVendorPlates();
@@ -71,7 +69,7 @@ export function VendorVouchers() {
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
-          <p className="text-gray-600">{t("common.loading")}</p>
+          <p className="text-gray-600">Loading...</p>
         </div>
       </div>
     );
@@ -88,10 +86,10 @@ export function VendorVouchers() {
       {plates.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-gray-500 text-lg mb-4">
-            {t("vendor.noVouchersCreated")}
+            No vouchers created yet
           </p>
           <p className="text-gray-400 text-sm">
-            {t("vendor.createFirstVoucher")}
+            Create your first voucher to get started
           </p>
         </div>
       ) : (
@@ -106,7 +104,7 @@ export function VendorVouchers() {
               </h3>
               <p className="text-gray-600 text-sm mb-4">{plate.description}</p>
               <div className="flex justify-between text-sm text-gray-500 mb-4">
-                <span>{t("vendor.voucher.maxSupply")}: {plate.maxSupply}</span>
+                <span>Max Supply: {plate.maxSupply}</span>
                 <span>
                   {new Date(plate.expiresAt * 1000).toLocaleDateString()}
                 </span>
@@ -118,7 +116,7 @@ export function VendorVouchers() {
 
       <button
         className="fixed bottom-16 right-8 w-14 h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-full flex items-center justify-center shadow-lg transition-all"
-        aria-label={t("vendor.createNewVoucher")}
+        aria-label="Create new voucher"
       >
         <Plus className="w-6 h-6" />
       </button>

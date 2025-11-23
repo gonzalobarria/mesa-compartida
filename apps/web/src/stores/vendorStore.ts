@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import { useAccount, useChainId, useWriteContract, usePublicClient } from "wagmi";
-import { useTranslations } from "next-intl";
 import { getContractAddress, getContractABI } from "@/config/contracts";
 import type { VendorProfile } from "@/types";
 
@@ -82,7 +81,6 @@ export const useVendorStore = createVendorStore();
 
 // Hook helper para acceso a acciones que requieren wagmi hooks
 export function useVendorStoreActions() {
-  const t = useTranslations();
   const { address } = useAccount();
   const chainId = useChainId();
   const { writeContractAsync } = useWriteContract();
@@ -92,7 +90,7 @@ export function useVendorStoreActions() {
 
   return {
     async createVendorProfile(name: string, ipfsHash: string) {
-      if (!address) throw new Error(t('errors.walletNotConnected'));
+      if (!address) throw new Error("Wallet not connected");
       return await createVendorProfileHandler(
         writeContractAsync,
         chainId,
@@ -103,7 +101,7 @@ export function useVendorStoreActions() {
     },
 
     async updateVendorProfile(name: string, ipfsHash: string) {
-      if (!address) throw new Error(t('errors.walletNotConnected'));
+      if (!address) throw new Error("Wallet not connected");
       return await updateVendorProfileHandler(
         writeContractAsync,
         chainId,
@@ -118,8 +116,7 @@ export function useVendorStoreActions() {
         publicClient,
         chainId,
         vendorAddress,
-        vendorStore,
-        t
+        vendorStore
       );
     },
   };
@@ -201,15 +198,14 @@ const fetchVendorProfileHandler = async (
   publicClient: any,
   chainId: number,
   vendorAddress: string,
-  vendorStore: any,
-  t: any
+  vendorStore: any
 ) => {
   vendorStore.setLoading(true);
   vendorStore.setError(null);
 
   try {
     if (!publicClient) {
-      throw new Error(t('errors.publicClientNotAvailable'));
+      throw new Error("Public client not available");
     }
 
     const contractAddress = getContractAddress(chainId, "MesaCompartida");
