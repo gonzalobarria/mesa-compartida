@@ -1,9 +1,7 @@
 "use client";
 
 import { Utensils, Search } from "lucide-react";
-import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { useParams } from "next/navigation";
 import { useUserStore } from "@/stores/userStore";
 
 interface HomeWelcomeProps {
@@ -15,15 +13,12 @@ export function HomeWelcome({
   searchQuery = "",
   onSearchChange,
 }: HomeWelcomeProps) {
-  const t = useTranslations();
   const router = useRouter();
-  const params = useParams();
-  const locale = params.locale as string;
   const setRole = useUserStore((state) => state.setRole);
 
   const handleLogoClick = () => {
     setRole("none");
-    router.push(`/${locale}`);
+    router.push(`/`);
   };
 
   return (
@@ -50,7 +45,7 @@ export function HomeWelcome({
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 flex-shrink-0" />
             <input
               type="text"
-              placeholder={t("search.searchPlates")}
+              placeholder="Search plates..."
               value={searchQuery}
               onChange={(e) => onSearchChange?.(e.target.value)}
               className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-full text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"

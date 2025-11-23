@@ -1,30 +1,25 @@
 "use client";
 
-import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { useParams } from "next/navigation";
 import { useUserStore } from "@/stores/userStore";
 import { useCallback } from "react";
 
 interface RoleOption {
   id: "vendor" | "donor" | "beneficiary";
-  titleKey: string;
-  descriptionKey: string;
+  title: string;
+  description: string;
   icon: React.ReactNode;
 }
 
 export function RoleSelector() {
-  const t = useTranslations();
   const router = useRouter();
-  const params = useParams();
-  const locale = params.locale as string;
   const setRole = useUserStore((state) => state.setRole);
 
   const roles: RoleOption[] = [
     {
       id: "vendor",
-      titleKey: "roles.vendor.title",
-      descriptionKey: "roles.vendor.description",
+      title: "Vendor",
+      description: "Sell your homemade dishes",
       icon: (
         <svg className="w-16 h-16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
           <path d="M20 7H4M20 7v10c0 1-1 2-2 2H6c-1 0-2-1-2-2V7M9 7V5c0-1 1-2 2-2h2c1 0 2 1 2 2v2M6 17v2h12v-2" />
@@ -34,8 +29,8 @@ export function RoleSelector() {
     },
     {
       id: "donor",
-      titleKey: "roles.donor.title",
-      descriptionKey: "roles.donor.description",
+      title: "Donor",
+      description: "Donate surplus food",
       icon: (
         <svg className="w-16 h-16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
           <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
@@ -44,8 +39,8 @@ export function RoleSelector() {
     },
     {
       id: "beneficiary",
-      titleKey: "roles.beneficiary.title",
-      descriptionKey: "roles.beneficiary.description",
+      title: "Beneficiary",
+      description: "Receive assistance",
       icon: (
         <svg className="w-16 h-16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
           <circle cx="9" cy="21" r="1" />
@@ -59,10 +54,8 @@ export function RoleSelector() {
   const handleRoleSelect = useCallback(
     (roleId: "vendor" | "donor" | "beneficiary") => {
       setRole(roleId);
-
-      router.push(`/${locale}`);
     },
-    [setRole, router, locale]
+    [setRole, router]
   );
 
   return (
@@ -70,10 +63,10 @@ export function RoleSelector() {
       <div className="max-w-md w-full">
         <div className="text-center mt-6 mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-3">
-            {t("roles.selectRole")}
+            Choose Your Role
           </h1>
           <p className="text-gray-600 text-lg">
-            {t("roles.selectRoleDescription")}
+            Select how you want to participate in Mesa Compartida
           </p>
         </div>
 
@@ -97,14 +90,14 @@ export function RoleSelector() {
                     ? "border-red-400 bg-red-50 hover:bg-red-100"
                     : "border-green-400 bg-green-50 hover:bg-green-100"
                 }`}
-                aria-label={`Select ${t(role.titleKey)} role`}
+                aria-label={`Select ${role.title} role`}
               >
                 <div className={`mb-2 ${colorClass}`}>{role.icon}</div>
                 <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                  {t(role.titleKey)}
+                  {role.title}
                 </h2>
                 <p className="text-gray-600 text-lg mb-2">
-                  {t(role.descriptionKey)}
+                  {role.description}
                 </p>
 
                 <div>
@@ -117,7 +110,7 @@ export function RoleSelector() {
           })}
         </div>
         <p className="text-center text-sm text-gray-500 mt-8">
-          {t("roles.canChangeRole")}
+          You can change your role at any time from your profile settings
         </p>
       </div>
     </div>

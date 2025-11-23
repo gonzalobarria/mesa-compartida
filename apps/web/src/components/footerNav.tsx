@@ -2,8 +2,6 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { useTranslations } from "next-intl"
-import { useLocale } from "next-intl"
 import { Home, Ticket } from "lucide-react"
 
 interface NavItem {
@@ -14,29 +12,27 @@ interface NavItem {
 
 export function FooterNav() {
   const pathname = usePathname()
-  const locale = useLocale()
-  const t = useTranslations("nav")
 
   const navItems: NavItem[] = [
     {
       icon: Home,
-      label: t("search"),
-      href: `/${locale}`,
+      label: "Search",
+      href: `/`,
     },
     {
       icon: Ticket,
-      label: t("vouchers"),
-      href: `/${locale}/vouchers`,
+      label: "Vouchers",
+      href: `/vouchers`,
     },
   ]
 
   const isActive = (href: string) => {
     // Remove locale from pathname for comparison
-    const pathWithoutLocale = pathname.replace(`/${locale}`, "")
-    if (href === `/${locale}`) {
+    const pathWithoutLocale = pathname.replace(`/`, "")
+    if (href === `/`) {
       return pathWithoutLocale === "" || pathWithoutLocale === "/"
     }
-    return pathWithoutLocale.startsWith(href.replace(`/${locale}`, ""))
+    return pathWithoutLocale.startsWith(href.replace(`/`, ""))
   }
 
   return (
