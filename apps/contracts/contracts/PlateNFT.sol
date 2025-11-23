@@ -43,6 +43,28 @@ contract PlateNFT is ERC721, ERC721Enumerable, Ownable {
         uint256 _maxSupply,
         uint256 _expiresAt
     ) external returns (uint256) {
+        return _createPlateInternal(msg.sender, _name, _description, _ipfsHash, _maxSupply, _expiresAt);
+    }
+
+    function createPlateForVendor(
+        address _vendor,
+        string memory _name,
+        string memory _description,
+        string memory _ipfsHash,
+        uint256 _maxSupply,
+        uint256 _expiresAt
+    ) external returns (uint256) {
+        return _createPlateInternal(_vendor, _name, _description, _ipfsHash, _maxSupply, _expiresAt);
+    }
+
+    function _createPlateInternal(
+        address _vendor,
+        string memory _name,
+        string memory _description,
+        string memory _ipfsHash,
+        uint256 _maxSupply,
+        uint256 _expiresAt
+    ) internal returns (uint256) {
         require(bytes(_name).length > 0, "Name cannot be empty");
         require(_maxSupply > 0, "Max supply must be > 0");
         require(
@@ -56,14 +78,14 @@ contract PlateNFT is ERC721, ERC721Enumerable, Ownable {
             name: _name,
             description: _description,
             ipfsHash: _ipfsHash,
-            vendor: msg.sender,
+            vendor: _vendor,
             createdAt: block.timestamp,
             expiresAt: _expiresAt,
             maxSupply: _maxSupply,
             availableVouchers: _maxSupply
         });
 
-        vendorPlates[msg.sender].push(plateId);
+        vendorPlates[_vendor].push(plateId);
         _allPlateIds.push(plateId);
 
         for (uint256 i = 0; i < _maxSupply; i++) {
@@ -77,14 +99,14 @@ contract PlateNFT is ERC721, ERC721Enumerable, Ownable {
 
             uint256 redemptionCode = uint256(
                 keccak256(
-                    abi.encodePacked(plateId, i, block.timestamp, msg.sender)
+                    abi.encodePacked(plateId, i, block.timestamp, _vendor)
                 )
             );
 
             voucherToRedemptionCode[tokenId] = redemptionCode;
             redemptionCodeToVoucher[redemptionCode] = tokenId;
 
-            _safeMint(msg.sender, tokenId);
+            _mint(_vendor, tokenId);
         }
 
         return plateId;

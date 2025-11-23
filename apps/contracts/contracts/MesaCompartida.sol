@@ -136,7 +136,8 @@ contract MesaCompartida is Ownable {
         require(isVendor[msg.sender], "Only vendors can create plates");
 
         return
-            plateNFT.createPlate(
+            plateNFT.createPlateForVendor(
+                msg.sender,
                 _name,
                 _description,
                 _ipfsHash,
@@ -381,27 +382,11 @@ contract MesaCompartida is Ownable {
     function getVendorPlates(
         address _vendor
     ) external view returns (PlateNFT.PlateMetadata[] memory) {
-        uint256 totalSupply = plateNFT.totalSupply();
-        uint256 count = 0;
+        uint256[] memory plateIds = plateNFT.getVendorPlates(_vendor);
+        PlateNFT.PlateMetadata[] memory vendorPlates = new PlateNFT.PlateMetadata[](plateIds.length);
 
-        for (uint256 i = 0; i < totalSupply; i++) {
-            try plateNFT.ownerOf(i) returns (address owner) {
-                if (owner == _vendor) {
-                    count++;
-                }
-            } catch {}
-        }
-
-        PlateNFT.PlateMetadata[] memory vendorPlates = new PlateNFT.PlateMetadata[](count);
-        uint256 index = 0;
-
-        for (uint256 i = 0; i < totalSupply; i++) {
-            try plateNFT.ownerOf(i) returns (address owner) {
-                if (owner == _vendor) {
-                    vendorPlates[index] = plateNFT.getPlateMetadata(i);
-                    index++;
-                }
-            } catch {}
+        for (uint256 i = 0; i < plateIds.length; i++) {
+            vendorPlates[i] = plateNFT.getPlateMetadata(plateIds[i]);
         }
 
         return vendorPlates;
