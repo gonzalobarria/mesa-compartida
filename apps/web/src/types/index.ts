@@ -29,5 +29,17 @@ export interface BeneficiaryProfile {
   createdAt: number;
 }
 
+// Plate/Voucher
+export interface Plate {
+  name: string;
+  description: string;
+  ipfsHash: string;
+  vendor: string;
+  createdAt: number;
+  expiresAt: number;
+  maxSupply: number;
+  availableVouchers: number;
+}
+
 // User Role
 export type UserRole = "vendor" | "donor" | "beneficiary" | "none";

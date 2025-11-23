@@ -34,6 +34,12 @@
       "ensHelper": "Your ENS domain will be used for verification",
       "submitButton": "Create Vendor Profile"
     },
+    "noVouchersCreated": "You haven't created any vouchers yet",
+    "createFirstVoucher": "Create your first voucher so customers can buy from you",
+    "createNewVoucher": "Create new voucher",
+    "voucher": {
+      "maxSupply": "Maximum"
+    },
     "errors": {
       "nameRequired": "Business name is required",
       "ensRequired": "ENS domain is required"
@@ -43,10 +49,12 @@
     "buttons": {
       "registering": "Registering..."
     },
+    "loading": "Loading...",
     "errors": {
       "walletNotConnected": "Wallet not connected",
       "networkNotSupported": "Network not supported",
-      "transactionFailed": "Transaction failed. Please try again"
+      "transactionFailed": "Transaction failed. Please try again",
+      "couldNotLoadData": "Could not load data. Please try again"
     }
   }
 }

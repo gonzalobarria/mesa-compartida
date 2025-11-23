@@ -34,6 +34,12 @@
       "ensHelper": "Tu dominio ENS se usará para la verificación",
       "submitButton": "Crear Perfil de Vendedor"
     },
+    "noVouchersCreated": "Aún no has creado ningún voucher",
+    "createFirstVoucher": "Crea tu primer voucher para que los clientes puedan comprar",
+    "createNewVoucher": "Crear nuevo voucher",
+    "voucher": {
+      "maxSupply": "Máximo"
+    },
     "errors": {
       "nameRequired": "El nombre del negocio es requerido",
       "ensRequired": "El dominio ENS es requerido"
@@ -43,10 +49,12 @@
     "buttons": {
       "registering": "Registrando..."
     },
+    "loading": "Cargando...",
     "errors": {
       "walletNotConnected": "Billetera no conectada",
       "networkNotSupported": "Red no soportada",
-      "transactionFailed": "Transacción fallida. Por favor intenta de nuevo"
+      "transactionFailed": "Transacción fallida. Por favor intenta de nuevo",
+      "couldNotLoadData": "No se pudo cargar los datos. Por favor intenta de nuevo"
     }
   }
 }

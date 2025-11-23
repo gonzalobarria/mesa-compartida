@@ -7,6 +7,7 @@ import { useUserStore } from "@/stores/userStore";
 import { useVendorStore } from "@/stores/vendorStore";
 import { HomeWelcome } from "@/components/homeWelcome";
 import { RoleSelector } from "@/components/roleSelector";
+import { VendorVouchers } from "@/components/vendor-vouchers";
 import { useRouter, useParams } from "next/navigation";
 import { getContractAddress, getContractABI } from "@/config/contracts";
 
@@ -132,11 +133,16 @@ export default function MarketplacePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
-        <HomeWelcome
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-        />
+      <HomeWelcome
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+      />
 
+      {userRole === "vendor" && vendorProfile && (
+        <div className="max-w-6xl mx-auto px-4">
+          <VendorVouchers />
+        </div>
+      )}
     </div>
   );
 }
