@@ -8,6 +8,7 @@ import { useVendorStore } from "@/stores/vendorStore";
 import { HomeWelcome } from "@/components/homeWelcome";
 import { RoleSelector } from "@/components/roleSelector";
 import { VendorVouchers } from "@/components/vendor-vouchers";
+import { BeneficiaryVouchers } from "@/components/beneficiary-vouchers";
 import { useRouter } from "next/navigation";
 import { getContractAddress, getContractABI } from "@/config/contracts";
 
@@ -136,6 +137,20 @@ export default function MarketplacePage() {
       {userRole === "vendor" && vendorProfile && (
         <div className="max-w-6xl mx-auto px-4">
           <VendorVouchers />
+        </div>
+      )}
+
+      {userRole === "beneficiary" && (
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              Available Vouchers
+            </h2>
+            <p className="text-gray-600">
+              Claim vouchers available for you to redeem
+            </p>
+          </div>
+          <BeneficiaryVouchers />
         </div>
       )}
     </div>
