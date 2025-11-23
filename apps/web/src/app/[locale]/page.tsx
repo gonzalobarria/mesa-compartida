@@ -9,7 +9,6 @@ import { HomeWelcome } from "@/components/homeWelcome";
 import { RoleSelector } from "@/components/roleSelector";
 import { useRouter, useParams } from "next/navigation";
 import { getContractAddress, getContractABI } from "@/config/contracts";
-import { hardhat } from "wagmi/chains";
 
 export default function MarketplacePage() {
   const userRole = useUserStore((state) => state.role);
@@ -19,7 +18,7 @@ export default function MarketplacePage() {
   const params = useParams();
   const locale = params.locale as string;
   const chainId = useChainId();
-  const publicClient = usePublicClient({ chainId: hardhat.id });
+  const publicClient = usePublicClient();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [isCheckingVendor, setIsCheckingVendor] = useState(false);

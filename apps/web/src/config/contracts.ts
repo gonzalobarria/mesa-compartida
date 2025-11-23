@@ -1,4 +1,4 @@
-import { celo, celoSepolia, hardhat } from "wagmi/chains";
+import { celo, celoSepolia } from "wagmi/chains";
 import MesaCompartidaABI from "./abis/MesaCompartida.json";
 import PlateNFTABI from "./abis/PlateNFT.json";
 
@@ -25,10 +25,6 @@ export const SMART_CONTRACTS_BY_CHAIN = {
   [celo.id]: {
     PlateNFT: "0x0000000000000000000000000000000000000000",
     MesaCompartida: "0x0000000000000000000000000000000000000000",
-  },
-  [hardhat.id]: {
-    PlateNFT: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-    MesaCompartida: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
   },
 } as const;
 

@@ -2,7 +2,6 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { WalletProvider } from "@/components/wallet-provider";
 import { FooterNav } from "@/components/footerNav";
-import { Navbar } from "@/components/navbar";
 
 export function generateStaticParams() {
   return [{ locale: "en" }, { locale: "es" }];
@@ -25,7 +24,6 @@ export default async function LocaleLayout({
         <NextIntlClientProvider messages={messages}>
           <div className="relative flex min-h-screen flex-col">
             <WalletProvider>
-              <Navbar />
               <main className="flex-1 pb-20 md:pb-0">
                 {children}
               </main>
