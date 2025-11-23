@@ -31,8 +31,8 @@ export function HomeWelcome({
               onClick={handleLogoClick}
               className="flex items-center gap-3 flex-shrink-0 hover:opacity-70 transition-opacity"
             >
-              <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <Image src="/mesa-mini.png" alt="Mesa Compartida" width={36} height={36} />
+              <div className="w-14 h-14 flex items-center justify-center flex-shrink-0">
+                <Image src="/mesa-mini.png" alt="Mesa Compartida" width={72} height={72} />
               </div>
               <div className="flex flex-col gap-1 w-20">
                 <h1 className="text-lg font-bold text-gray-900 leading-5">

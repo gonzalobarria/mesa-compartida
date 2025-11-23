@@ -161,7 +161,7 @@ export function CreateVoucherModal({ isOpen, onClose, onSuccess }: CreateVoucher
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               placeholder="Ex: Cheese Arepa"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E07B39]"
               disabled={isLoading}
             />
           </div>
@@ -175,7 +175,7 @@ export function CreateVoucherModal({ isOpen, onClose, onSuccess }: CreateVoucher
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               placeholder="Describe your dish and its ingredients"
               rows={3}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E07B39]"
               disabled={isLoading}
             />
           </div>
@@ -190,7 +190,7 @@ export function CreateVoucherModal({ isOpen, onClose, onSuccess }: CreateVoucher
                 value={formData.maxSupply}
                 onChange={(e) => setFormData({ ...formData, maxSupply: e.target.value })}
                 min="1"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E07B39]"
                 disabled={isLoading}
               />
             </div>
@@ -204,7 +204,7 @@ export function CreateVoucherModal({ isOpen, onClose, onSuccess }: CreateVoucher
                 value={formData.expiresInDays}
                 onChange={(e) => setFormData({ ...formData, expiresInDays: e.target.value })}
                 min="1"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E07B39]"
                 disabled={isLoading}
               />
             </div>
@@ -221,7 +221,7 @@ export function CreateVoucherModal({ isOpen, onClose, onSuccess }: CreateVoucher
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50"
+              className="flex-1 px-4 py-2 bg-[#E07B39] text-white rounded-lg font-medium hover:bg-[#C96A2E] disabled:opacity-50"
               disabled={isLoading || isConfirming}
             >
               {isLoading ? "Creating..." : isConfirming ? "Confirming..." : "Create Voucher"}

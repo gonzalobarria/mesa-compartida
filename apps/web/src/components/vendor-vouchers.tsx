@@ -6,6 +6,7 @@ import { usePublicClient } from "wagmi";
 import { Plus, ShoppingCart } from "lucide-react";
 import { getContractAddress, getContractABI } from "@/config/contracts";
 import { Plate } from "@/types";
+import { CreateVoucherModal } from "./create-voucher-modal";
 
 export function VendorVouchers() {
   const { address } = useAccount();
@@ -15,6 +16,7 @@ export function VendorVouchers() {
   const [plates, setPlates] = useState<Plate[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const fetchVendorPlates = useCallback(async () => {
     if (!address || !publicClient || !chainId) return;
@@ -168,11 +170,18 @@ export function VendorVouchers() {
       )}
 
       <button
+        onClick={() => setIsCreateModalOpen(true)}
         className="fixed bottom-16 right-8 w-14 h-14 bg-[#E07B39] hover:bg-[#C96A2E] text-white rounded-full flex items-center justify-center shadow-lg transition-all"
         aria-label="Create new voucher"
       >
         <Plus className="w-6 h-6" />
       </button>
+
+      <CreateVoucherModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onSuccess={() => fetchVendorPlates()}
+      />
     </div>
   );
 }

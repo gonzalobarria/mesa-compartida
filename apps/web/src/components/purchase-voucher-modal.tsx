@@ -34,6 +34,7 @@ interface PurchaseVoucherModalProps {
   plate: Plate | null;
   vendorInfo: VendorInfo | null;
   onClose: () => void;
+  onPurchaseSuccess?: () => void;
 }
 
 
@@ -62,6 +63,7 @@ export function PurchaseVoucherModal({
   plate,
   vendorInfo,
   onClose,
+  onPurchaseSuccess,
 }: PurchaseVoucherModalProps) {
   const chainId = useChainId();
   const { address } = useAccount();
@@ -135,12 +137,12 @@ export function PurchaseVoucherModal({
 
   if (!plate) return null;
 
-  const price = 1; // Precio por defecto en cUSD (ajusta según necesites)
-  const totalAmount = price * quantity;
+  const pricePerVoucher = 1; // Precio fijo: 1 USD por voucher
+  const totalAmount = pricePerVoucher * quantity;
 
   const handlePurchase = async () => {
-    if (!address || !publicClient) {
-      setError("Wallet not connected");
+    if (!address || !publicClient || !plate) {
+      setError("Wallet not connected or plate not selected");
       return;
     }
 
@@ -168,15 +170,17 @@ export function PurchaseVoucherModal({
         });
 
         console.log("Approval transaction:", approveTxHash);
+
+        // Wait a bit for the approval to be mined
+        await new Promise(resolve => setTimeout(resolve, 1000));
       } catch (approveError) {
         console.error("Approval error:", approveError);
         throw new Error("Failed to approve token");
       }
 
       // PASO 2: Comprar voucher
-      // Necesitamos el voucherTokenId. Por ahora usamos un placeholder.
-      // En una implementación real, esto debería venir del plate seleccionado
-      const voucherTokenId = BigInt(1); // Placeholder
+      // Usamos voucherTokenId = 1 por ahora (placeholder)
+      const voucherTokenId = BigInt(1);
 
       const txHash = await writeContractAsync({
         address: mesaAddress as `0x${string}`,
@@ -187,6 +191,10 @@ export function PurchaseVoucherModal({
 
       setTransactionHash(txHash);
       setShowSuccessScreen(true);
+      // Call the success callback after successful purchase
+      setTimeout(() => {
+        onPurchaseSuccess?.();
+      }, 2000);
     } catch (err) {
       console.error("Purchase error:", err);
       setError(err instanceof Error ? err.message : "Purchase failed");
@@ -462,7 +470,7 @@ export function PurchaseVoucherModal({
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-700">
-                      {quantity}x {price.toFixed(2)} {selectedToken.symbol}
+                      {quantity}x {pricePerVoucher.toFixed(2)} {selectedToken.symbol}
                     </span>
                     <span className="font-medium text-gray-900">
                       {totalAmount.toFixed(2)} {selectedToken.symbol}

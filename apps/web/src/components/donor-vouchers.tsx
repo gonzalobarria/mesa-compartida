@@ -225,6 +225,10 @@ export function DonorVouchers() {
         plate={selectedPlate}
         vendorInfo={selectedVendorInfo}
         onClose={() => setIsModalOpen(false)}
+        onPurchaseSuccess={() => {
+          setIsModalOpen(false);
+          fetchMarketplaceVouchers();
+        }}
       />
     </div>
   );
