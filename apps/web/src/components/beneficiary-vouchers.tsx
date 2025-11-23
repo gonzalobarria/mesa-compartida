@@ -48,7 +48,9 @@ export function BeneficiaryVouchers() {
       const mesaABI = getContractABI("MesaCompartida");
       const plateABI = getContractABI("PlateNFT");
 
-      if (!mesaAddress || !plateAddress) {
+      if (!mesaAddress || !plateAddress ||
+          mesaAddress === "0x0000000000000000000000000000000000000000" ||
+          plateAddress === "0x0000000000000000000000000000000000000000") {
         setError("Network not supported");
         return;
       }

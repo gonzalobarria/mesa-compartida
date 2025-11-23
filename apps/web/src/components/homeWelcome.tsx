@@ -1,6 +1,7 @@
 "use client";
 
-import { Utensils, Search } from "lucide-react";
+import { Search } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "@/stores/userStore";
 
@@ -31,7 +32,7 @@ export function HomeWelcome({
               className="flex items-center gap-3 flex-shrink-0 hover:opacity-70 transition-opacity"
             >
               <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <Utensils className="w-6 h-6 text-orange-600" />
+                <Image src="/mesa-mini.png" alt="Mesa Compartida" width={36} height={36} />
               </div>
               <div className="flex flex-col gap-1 w-20">
                 <h1 className="text-lg font-bold text-gray-900 leading-5">
